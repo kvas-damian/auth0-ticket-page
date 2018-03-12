@@ -2,9 +2,9 @@ import React from 'react';
 
 function Breadcrumb(props) {
 	return (
-		<ol class="breadcrumb has-homepage">
+		<ol className="breadcrumb has-homepage">
 			{props.items.map(item =>
-				<li><a href={item.link}>{item.text}</a></li>
+				<li key={item.link}><a href={item.link}>{item.text}</a></li>
 			)}
 		</ol>
 	);

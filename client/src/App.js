@@ -5,6 +5,7 @@ import { Footer } from '@auth0/styleguide-react-components';
 import Header from './components/Header';
 import Spinner from './components/Spinner';
 import Breadcrumb from "./components/Breadcrumb";
+import Ticket from "./components/Ticket";
 
 class App extends Component {
 	state = {};
@@ -17,24 +18,23 @@ class App extends Component {
 	}
 
 	render() {
-		// TODO add ticket page
 		const breadcrumbItems = [{link: '/', text: 'Home'}, {link: '/tickets', text: 'Tickets'}];
+
+		if (this.state.ticket) {
+			breadcrumbItems.push({link: `/tickets/${this.state.ticket.id}`, text: this.state.ticket.subject})
+		}
 
 		return (
 			<div className="App">
 				<Header />
-				<div class="container">
+				<div className="container">
 				{!this.state.ticket ?
 					<Spinner/>
 					:
 					<div>
 						<Breadcrumb items={breadcrumbItems}/>
 
-						<h1>{this.state.ticket && this.state.ticket.subject}</h1>
-						<h2>Ticket: {this.state.ticket && this.state.ticket.id}</h2>
-						{this.state.ticket && this.state.ticket.comments.map(comment =>
-							<div key={comment.id}>{comment.body}</div>
-						)}
+						<Ticket ticket={this.state.ticket} />
 					</div>
 				}
 				</div>

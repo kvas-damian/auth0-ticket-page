@@ -1,0 +1,10 @@
+.comment {
+	border-radius: 3px;
+	padding: 20px;
+	background-color: #ecf1f6;
+	margin-bottom: 20px;
+}
+
+.comment.pull-right {
+	background-color: #fcfcfc;
+}
