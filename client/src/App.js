@@ -3,6 +3,8 @@ import './App.css';
 
 import { Footer } from '@auth0/styleguide-react-components';
 import Header from './components/Header';
+import Spinner from './components/Spinner';
+import Breadcrumb from "./components/Breadcrumb";
 
 class App extends Component {
 	state = {};
@@ -15,17 +17,30 @@ class App extends Component {
 	}
 
 	render() {
+		// TODO add ticket page
+		const breadcrumbItems = [{link: '/', text: 'Home'}, {link: '/tickets', text: 'Tickets'}];
+
 		return (
 			<div className="App">
 				<Header />
-				<h1>{this.state.ticket && this.state.ticket.subject}</h1>
-				<h2>Ticket: {this.state.ticket && this.state.ticket.id}</h2>
-				{this.state.ticket && this.state.ticket.comments.map(comment =>
-					<div key={comment.id}>{comment.body}</div>
-				)}
+				<div class="container">
+				{!this.state.ticket ?
+					<Spinner/>
+					:
+					<div>
+						<Breadcrumb items={breadcrumbItems}/>
+
+						<h1>{this.state.ticket && this.state.ticket.subject}</h1>
+						<h2>Ticket: {this.state.ticket && this.state.ticket.id}</h2>
+						{this.state.ticket && this.state.ticket.comments.map(comment =>
+							<div key={comment.id}>{comment.body}</div>
+						)}
+					</div>
+				}
+				</div>
 				<Footer />
 			</div>
-	);
+		);
 	}
 }
 
