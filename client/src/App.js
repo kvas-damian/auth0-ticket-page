@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { Footer } from '@auth0/styleguide-react-components';
+import { Footer, Button } from '@auth0/styleguide-react-components';
 import Header from './components/Header';
 import Spinner from './components/Spinner';
 import Breadcrumb from "./components/Breadcrumb";
@@ -28,11 +28,13 @@ class App extends Component {
 			<div className="App">
 				<Header />
 				<div className="container">
+					<Breadcrumb items={breadcrumbItems}/>
 				{!this.state.ticket ?
-					<Spinner/>
+					<div className="loading-screen">
+						<Spinner/>
+					</div>
 					:
 					<div>
-						<Breadcrumb items={breadcrumbItems}/>
 
 						<Ticket ticket={this.state.ticket} />
 					</div>

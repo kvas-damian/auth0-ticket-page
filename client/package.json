@@ -3,21 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@auth0/styleguide-react-components": "^1.0.3",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.1"
+    "react-scripts": "1.1.1",
+    "react-timeago": "^3.4.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "mkdir styleguide; cd styleguide; git init; git remote add -f origin https://github.com/kvas-damian/styleguide.git; git config core.sparseCheckout true; echo \"packages/react-components\" >> .git/info/sparse-checkout; git pull --depth=1 origin update-to-react16; npm install; cd ..; npm i ./styleguide/packages/react-components/"
   },
-  "proxy": "http://localhost:7777",
-  "devDependencies": {
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.7"
-  }
+  "proxy": "http://localhost:7777"
 }
