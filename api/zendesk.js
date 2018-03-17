@@ -17,6 +17,24 @@ function makeRequest(path, method='GET', body) {
 	}).then(res => res.json());
 }
 
+function getAuthors(authorIds) {
+	return makeRequest(`users/show_many.json?ids=${[...new Set(authorIds)].join(',')}`).then(authors => {
+		const authorOutput = {};
+
+		authors.users.forEach(author => {
+			const names = author.name.split(' ');
+
+			authorOutput[author.id] = {
+				name: author.name,
+				photo: authors.users[0].photo ? authors.users[0].photo.content_url : null,
+				initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
+			}
+		});
+
+		return authorOutput;
+	});
+}
+
 module.exports = {
 	// TODO add authorization
 	getTicket(ticketId) {
@@ -31,20 +49,8 @@ module.exports = {
 			}).then(ticket =>{
 				const authorIds = ticket.comments.map(comment => comment.author_id);
 
-				return makeRequest(`users/show_many.json?ids=${[...new Set(authorIds)].join(',')}`).then(authors => {
-					const authorOutput = {};
-
-					authors.users.forEach(author => {
-						const names = author.name.split(' ');
-
-						authorOutput[author.id] = {
-							name: author.name,
-							photo: authors.users[0].photo ? authors.users[0].photo.content_url : null,
-							initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
-						}
-					});
-
-					ticket.comments.forEach(comment => comment.author = authorOutput[comment.author_id]);
+				return getAuthors(authorIds).then(authors => {
+					ticket.comments.forEach(comment => comment.author = authors[comment.author_id]);
 					return ticket;
 				});
 			})
@@ -61,6 +67,18 @@ module.exports = {
 					body
 				}
 			}
+		}).then(res => {
+			const comment = res.audit.events[0];
+
+			return getAuthors([comment.author_id]).then(authors => {
+				return {
+					author: authors[comment.author_id],
+					author_id: comment.author_id,
+					body: comment.body,
+					created_at: res.audit.created_at,
+					id: comment.id
+				};
+			});
 		});
 	}
 };

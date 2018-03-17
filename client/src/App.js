@@ -8,6 +8,13 @@ import Breadcrumb from "./components/Breadcrumb";
 import Ticket from "./components/Ticket";
 
 class App extends Component {
+
+	constructor(props) {
+		super(props);
+
+		this.onCommentFormSubmit = this.onCommentFormSubmit.bind(this);
+	}
+
 	state = {};
 
 	componentDidMount() {
@@ -15,6 +22,23 @@ class App extends Component {
 		fetch(`/api/tickets/${window.location.pathname.split('/').pop()}`)
 			.then(res => res.json())
 			.then(ticket => this.setState({ ticket }));
+	}
+
+	onCommentFormSubmit(commentBody) {
+		return fetch(`/api/tickets/${window.location.pathname.split('/').pop()}`, {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			method: 'PUT',
+			body: JSON.stringify({comment: commentBody})
+		}).then(res => res.json()).then(comment => {
+			const updatedTicket = Object.assign({}, this.state.ticket);
+
+			updatedTicket.comments.push(comment);
+			this.setState({ticket: updatedTicket});
+
+			return comment;
+		});
 	}
 
 	render() {
@@ -36,7 +60,7 @@ class App extends Component {
 					:
 					<div>
 
-						<Ticket ticket={this.state.ticket} />
+						<Ticket ticket={this.state.ticket} onCommentFormSubmit={this.onCommentFormSubmit}/>
 					</div>
 				}
 				</div>

@@ -29,7 +29,7 @@ function Ticket(props) {
 					)}
 				</div>
 			}
-			<CommentForm />
+			<CommentForm onSubmit={props.onCommentFormSubmit}/>
 		</div>
 	);
 }

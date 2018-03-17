@@ -23,12 +23,8 @@ class CommentForm extends Component {
 	}
 
 	handleSubmit(event) {
-		fetch(`/api/tickets/${window.location.pathname.split('/').pop()}`, {
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-			},
-			method: 'PUT',
-			body: `comment=${encodeURIComponent(this.state.value)}`
+		this.props.onSubmit(this.state.value).then(comment => {
+			this.setState({value: ''});
 		});
 
 		event && event.preventDefault();
