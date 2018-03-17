@@ -12,7 +12,7 @@ function Comment(props) {
 			</div>
 			<div className="col-md-11">
 				<h4>{props.comment.author.name} <TimeAgo date={props.comment.created_at} /></h4>
-				{props.comment.body}
+				<div dangerouslySetInnerHTML={{__html: props.comment.html_body}} />
 			</div>
 		</div>
 	);

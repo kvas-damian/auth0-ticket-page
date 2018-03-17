@@ -74,7 +74,7 @@ module.exports = {
 				return {
 					author: authors[comment.author_id],
 					author_id: comment.author_id,
-					body: comment.body,
+					html_body: comment.html_body,
 					created_at: res.audit.created_at,
 					id: comment.id
 				};

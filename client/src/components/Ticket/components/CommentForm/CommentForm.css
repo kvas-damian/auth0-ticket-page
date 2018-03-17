@@ -1,3 +1,7 @@
+.comment-form {
+	position: relative;
+}
+
 .comment-form-textarea {
 	min-height: 200px;
 	resize: vertical;
@@ -9,4 +13,21 @@
 
 .comment-form-label {
 	font-size: 18px;
+}
+
+.comment-form-overlay {
+	align-items: center;
+	background-color: rgba(255, 255, 255, .85);
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.comment-form-success {
+	color: #7ED321;
+	font-size: 64px;
 }

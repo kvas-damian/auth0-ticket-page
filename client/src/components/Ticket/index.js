@@ -22,7 +22,7 @@ function Ticket(props) {
 				</div>
 			</div>
 			{props.ticket.comments.length > 1 &&
-				<div>
+				<div className="row">
 					<h2>Comments</h2>
 					{props.ticket.comments.slice(1).map(comment =>
 						<Comment key={comment.id} comment={comment} primary={props.ticket.submitter_id === comment.author_id}/>
