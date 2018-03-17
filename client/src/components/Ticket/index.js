@@ -2,6 +2,7 @@ import React from 'react';
 import TimeAgo from 'react-timeago';
 import Comment from "./components/Comment";
 import Avatar from "./components/Avatar";
+import CommentForm from "./components/CommentForm";
 
 import './Ticket.css';
 
@@ -20,10 +21,15 @@ function Ticket(props) {
 					{firstComment.body}
 				</div>
 			</div>
-			<h2>Comments</h2>
-			{props.ticket.comments.slice(1).map(comment =>
-				<Comment key={comment.id} comment={comment} primary={props.ticket.submitter_id === comment.author_id}/>
-			)}
+			{props.ticket.comments.length > 1 &&
+				<div>
+					<h2>Comments</h2>
+					{props.ticket.comments.slice(1).map(comment =>
+						<Comment key={comment.id} comment={comment} primary={props.ticket.submitter_id === comment.author_id}/>
+					)}
+				</div>
+			}
+			<CommentForm />
 		</div>
 	);
 }

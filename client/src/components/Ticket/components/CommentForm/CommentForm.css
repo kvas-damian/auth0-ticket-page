@@ -1,0 +1,12 @@
+.comment-form-textarea {
+	min-height: 200px;
+	resize: vertical;
+}
+
+.comment-form-button {
+	margin-top: 35px;
+}
+
+.comment-form-label {
+	font-size: 18px;
+}

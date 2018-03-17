@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { Footer, Button } from '@auth0/styleguide-react-components';
+import { Footer } from '@auth0/styleguide-react-components';
 import Header from './components/Header';
 import Spinner from './components/Spinner';
 import Breadcrumb from "./components/Breadcrumb";

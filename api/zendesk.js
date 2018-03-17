@@ -4,13 +4,17 @@ const fetch = require("node-fetch");
 const API_URL = 'https://will-code-for-pizza.zendesk.com/api/v2/';
 
 
-function makeRequest(path, method='GET') {
+function makeRequest(path, method='GET', body) {
 	const url = `${API_URL}${path}`;
 	const basicAuthToken = new Buffer(`${config.ZENDESK_API_USER}/token:${config.ZENDESK_API_TOKEN}`, "utf8")
 		.toString("base64");
 
 	// TODO add error handling
-	return fetch(url, { headers: { Authorization: `Basic ${basicAuthToken}` } }).then(res => res.json());
+	return fetch(url, {
+		headers: { Authorization: `Basic ${basicAuthToken}`, 'Content-Type': 'application/json' },
+		method,
+		body: JSON.stringify(body)
+	}).then(res => res.json());
 }
 
 module.exports = {
@@ -45,5 +49,18 @@ module.exports = {
 				});
 			})
 		);
+	},
+
+	addComment(ticketId, authorId, body) {
+		const ticketPath = `tickets/${ticketId}.json`;
+
+		return makeRequest(ticketPath, 'PUT', {
+			ticket: {
+				comment: {
+					author_id: authorId,
+					body
+				}
+			}
+		});
 	}
 };
