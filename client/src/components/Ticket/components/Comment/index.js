@@ -1,12 +1,14 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
+import Avatar from '../Avatar'
 import './Comment.css';
 
 function Comment(props) {
+
 	return (
 		<div className={"comment col-xs-11 " + (props.primary ? '' : 'pull-right')}>
 			<div className="col-md-1">
-				<img className="avatar" src={props.comment.author.photo} />
+				<Avatar author={props.comment.author} />
 			</div>
 			<div className="col-md-11">
 				<h4>{props.comment.author.name} <TimeAgo date={props.comment.created_at} /></h4>

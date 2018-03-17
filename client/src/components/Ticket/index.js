@@ -1,6 +1,7 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
 import Comment from "./components/Comment";
+import Avatar from "./components/Avatar";
 
 import './Ticket.css';
 
@@ -12,7 +13,7 @@ function Ticket(props) {
 			<h1>{props.ticket && props.ticket.subject}</h1>
 			<div className="ticket-body row">
 				<div className="col-md-1">
-					<img className="avatar" src={firstComment.author.photo} />
+					<Avatar author={firstComment.author}/>
 				</div>
 				<div className="col-md-11">
 					<h4>{firstComment.author.name} <TimeAgo date={firstComment.created_at} /></h4>

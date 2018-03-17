@@ -30,9 +30,14 @@ module.exports = {
 				return makeRequest(`users/show_many.json?ids=${[...new Set(authorIds)].join(',')}`).then(authors => {
 					const authorOutput = {};
 
-					authors.users.forEach(author => authorOutput[author.id] = {
-						name: author.name,
-						photo: authors.users[0].photo.content_url
+					authors.users.forEach(author => {
+						const names = author.name.split(' ');
+
+						authorOutput[author.id] = {
+							name: author.name,
+							photo: authors.users[0].photo ? authors.users[0].photo.content_url : null,
+							initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
+						}
 					});
 
 					ticket.comments.forEach(comment => comment.author = authorOutput[comment.author_id]);

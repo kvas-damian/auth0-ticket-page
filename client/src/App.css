@@ -5,12 +5,6 @@
 	min-height: 400px;
 }
 
-.avatar {
-	border-radius: 50%;
-	height: 42px;
-	width: 42px;
-}
-
 time {
 	color: #5C666F;
 	font-size: 12px;
