@@ -23,7 +23,7 @@ class TicketPage extends Component {
 	}
 
 	onCommentFormSubmit(commentBody) {
-		return fetch(`/api/tickets/${this.id}`, {
+		return fetch(`/api/tickets/${this.props.id}`, {
 			headers: {
 				'Authorization': `Bearer ${this.props.auth.getAccessToken()}`,
 				'Content-Type': 'application/json'

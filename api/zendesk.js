@@ -17,48 +17,34 @@ function makeRequest(path, method='GET', body) {
 	}).then(res => res.json());
 }
 
-function getAuthors(authorIds) {
-	return makeRequest(`users/show_many.json?ids=${[...new Set(authorIds)].join(',')}`).then(authors => {
-		const authorOutput = {};
+function formatAuthor(author) {
+	const names = author.name.split(' ');
 
-		authors.users.forEach(author => {
-			const names = author.name.split(' ');
-
-			authorOutput[author.id] = {
-				name: author.name,
-				photo: authors.users[0].photo ? authors.users[0].photo.content_url : null,
-				initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
-			}
-		});
-
-		return authorOutput;
-	});
+	return {
+		name: author.name,
+		photo: author.photo ? author.photo.content_url : null,
+		initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
+	}
 }
 
 module.exports = {
 	// TODO add authorization
 	getTicket(ticketId) {
 		const ticketPath = `tickets/${ticketId}.json`;
-		const commentsPath = `tickets/${ticketId}/comments.json`;
+		const commentsPath = `tickets/${ticketId}/comments.json?include=users`;
 
 		// TODO error handling, 500s, 404s, ...
 		return makeRequest(ticketPath).then(ticket =>
 			makeRequest(commentsPath).then(comments => {
 				ticket.ticket.comments = comments.comments;
+				ticket.ticket.comments.forEach(comment => comment.author = formatAuthor(comments.users.find(user => user.id === comment.author_id)));
 				return ticket.ticket;
-			}).then(ticket =>{
-				const authorIds = ticket.comments.map(comment => comment.author_id);
-
-				return getAuthors(authorIds).then(authors => {
-					ticket.comments.forEach(comment => comment.author = authors[comment.author_id]);
-					return ticket;
-				});
 			})
 		);
 	},
 
 	addComment(ticketId, authorId, body) {
-		const ticketPath = `tickets/${ticketId}.json`;
+		const ticketPath = `tickets/${ticketId}.json?include=users`;
 
 		return makeRequest(ticketPath, 'PUT', {
 			ticket: {
@@ -70,15 +56,13 @@ module.exports = {
 		}).then(res => {
 			const comment = res.audit.events[0];
 
-			return getAuthors([comment.author_id]).then(authors => {
-				return {
-					author: authors[comment.author_id],
-					author_id: comment.author_id,
-					html_body: comment.html_body,
-					created_at: res.audit.created_at,
-					id: comment.id
-				};
-			});
+			return {
+				author: formatAuthor(res.users.find(user => user.id === comment.author_id)),
+				author_id: comment.author_id,
+				html_body: comment.html_body,
+				created_at: res.audit.created_at,
+				id: comment.id
+			};
 		});
 	}
 };
