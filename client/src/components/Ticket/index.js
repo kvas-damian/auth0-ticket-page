@@ -5,6 +5,7 @@ import Avatar from "./components/Avatar";
 import CommentForm from "./components/CommentForm";
 
 import './Ticket.css';
+import CollaboratorsList from "../CollaboratorsList";
 
 function Ticket(props) {
 	const firstComment = props.ticket.comments[0];
@@ -16,10 +17,16 @@ function Ticket(props) {
 				<div className="col-md-1">
 					<Avatar author={firstComment.author}/>
 				</div>
-				<div className="col-md-11">
+				<div className="col-md-7">
 					<h4>{firstComment.author.name} <TimeAgo date={firstComment.created_at} /></h4>
 					<div dangerouslySetInnerHTML={{__html: firstComment.html_body}} />
 				</div>
+				{props.ticket.collaborators && props.ticket.collaborators.length > 0 &&
+					<div className="col-md-4">
+						<h3>Collaborators</h3>
+						<CollaboratorsList collaborators={props.ticket.collaborators}/>
+					</div>
+				}
 			</div>
 			{props.ticket.comments.length > 1 &&
 				<div className="row">

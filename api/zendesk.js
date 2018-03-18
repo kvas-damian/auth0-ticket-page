@@ -31,6 +31,7 @@ function formatAuthor(author) {
 	const names = author.name.split(' ');
 
 	return {
+		email: author.email,
 		name: author.name,
 		photo: author.photo ? author.photo.content_url : null,
 		initials: names[0][0] + (names[1] ? ' ' + names[1][0] : '')
@@ -39,7 +40,7 @@ function formatAuthor(author) {
 
 module.exports = {
 	getTicket(ticketId) {
-		const ticketPath = `tickets/${ticketId}.json`;
+		const ticketPath = `tickets/${ticketId}.json?include=users`;
 		const commentsPath = `tickets/${ticketId}/comments.json?include=users`;
 
 		return makeRequest(ticketPath).then(ticketResponse => {
@@ -48,6 +49,7 @@ module.exports = {
 					const ticket = {
 						subject: ticketResponse.ticket.subject,
 						submitter_id: ticketResponse.ticket.submitter_id,
+						collaborators: ticketResponse.ticket.collaborator_ids.map(userId => formatAuthor(ticketResponse.users.find(user => user.id === userId)))
 					};
 
 					ticket.comments = comments.comments.map(comment => ({
