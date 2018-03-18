@@ -9,12 +9,21 @@ function makeRequest(path, method='GET', body) {
 	const basicAuthToken = new Buffer(`${config.ZENDESK_API_USER}/token:${config.ZENDESK_API_TOKEN}`, "utf8")
 		.toString("base64");
 
-	// TODO add error handling
 	return fetch(url, {
 		headers: { Authorization: `Basic ${basicAuthToken}`, 'Content-Type': 'application/json' },
 		method,
 		body: JSON.stringify(body)
-	}).then(res => res.json());
+	}).then(res => {
+		if (res.status === 200) {
+			return res.json();
+		} else if (res.status === 404) {
+			return null;
+		} else {
+			const error = new Error(res.status);
+			error.response = res.statusText;
+			return Promise.reject(error);
+		}
+	});
 }
 
 function formatAuthor(author) {
@@ -33,24 +42,27 @@ module.exports = {
 		const ticketPath = `tickets/${ticketId}.json`;
 		const commentsPath = `tickets/${ticketId}/comments.json?include=users`;
 
-		// TODO error handling, 500s, 404s, ...
-		return makeRequest(ticketPath).then(ticketResponse =>
-			makeRequest(commentsPath).then(comments => {
-				const ticket = {
-					subject: ticketResponse.ticket.subject,
-					submitter_id: ticketResponse.ticket.submitter_id
-				};
+		return makeRequest(ticketPath).then(ticketResponse => {
+			if (ticketResponse) {
+				return makeRequest(commentsPath).then(comments => {
+					const ticket = {
+						subject: ticketResponse.ticket.subject,
+						submitter_id: ticketResponse.ticket.submitter_id
+					};
 
-				ticket.comments = comments.comments.map(comment => ({
-					author: formatAuthor(comments.users.find(user => user.id === comment.author_id)),
-					author_id: comment.author_id,
-					created_at: comment.created_at,
-					html_body: comment.html_body,
-					id: comment.id,
-				}));
-				return ticket;
-			})
-		);
+					ticket.comments = comments.comments.map(comment => ({
+						author: formatAuthor(comments.users.find(user => user.id === comment.author_id)),
+						author_id: comment.author_id,
+						created_at: comment.created_at,
+						html_body: comment.html_body,
+						id: comment.id,
+					}));
+					return ticket;
+				});
+			}
+
+			return Promise.resolve();
+		});
 	},
 
 	addComment(ticketId, authorId, body) {

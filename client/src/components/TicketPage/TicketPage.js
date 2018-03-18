@@ -5,6 +5,10 @@ import Breadcrumb from "../Breadcrumb";
 import Ticket from "../Ticket";
 
 class TicketPage extends Component {
+	STATE_DONE = 'done';
+	STATE_ERROR = 'error';
+	STATE_LOADING = 'loading';
+	STATE_NOT_FOUND = 'not-found';
 
 	constructor(props) {
 		super(props);
@@ -12,17 +16,27 @@ class TicketPage extends Component {
 		this.onCommentFormSubmit = this.onCommentFormSubmit.bind(this);
 	}
 
-	state = {};
+	state = {
+		state: this.STATE_LOADING
+	};
 
 	componentDidMount() {
 		if (this.props.auth.isAuthenticated()) {
 			fetch(`/api/tickets/${this.props.id}`, { headers: { 'Authorization': `Bearer ${this.props.auth.getAccessToken()}`} } )
-				.then(res => res.json())
-				.then(ticket => this.setState({ ticket }));
+				.then(res => {
+					if (res.status === 404) {
+						this.setState({ state: this.STATE_NOT_FOUND });
+					} else if (res.status >= 400) {
+						this.setState({ state: this.STATE_ERROR });
+					} else {
+						res.json().then(ticket => this.setState({ state: this.STATE_DONE, ticket}));
+					}
+				})
 		}
 	}
 
 	onCommentFormSubmit(commentBody) {
+		// TODO error handling
 		return fetch(`/api/tickets/${this.props.id}`, {
 			headers: {
 				'Authorization': `Bearer ${this.props.auth.getAccessToken()}`,
@@ -52,14 +66,24 @@ class TicketPage extends Component {
 			{ this.props.auth.isAuthenticated() ?
 				<div>
 				<Breadcrumb items={breadcrumbItems}/>
-				{!this.state.ticket ?
+				{this.state.state === this.STATE_LOADING ?
 					<div className="loading-screen">
 						<Spinner/>
 					</div>
 					:
 					<div>
-
-						<Ticket ticket={this.state.ticket} onCommentFormSubmit={this.onCommentFormSubmit}/>
+					{(() => {
+						switch(this.state.state) {
+							case this.STATE_DONE:
+								return(
+									<Ticket ticket={this.state.ticket} onCommentFormSubmit={this.onCommentFormSubmit}/>
+								);
+							case this.STATE_NOT_FOUND:
+								return 'Ticket not found';
+							case this.STATE_ERROR:
+								return 'The website encountered an unexpected error. Please try again later';
+						}
+					})()}
 					</div>
 				}
 				</div> :
