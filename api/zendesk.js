@@ -34,11 +34,21 @@ module.exports = {
 		const commentsPath = `tickets/${ticketId}/comments.json?include=users`;
 
 		// TODO error handling, 500s, 404s, ...
-		return makeRequest(ticketPath).then(ticket =>
+		return makeRequest(ticketPath).then(ticketResponse =>
 			makeRequest(commentsPath).then(comments => {
-				ticket.ticket.comments = comments.comments;
-				ticket.ticket.comments.forEach(comment => comment.author = formatAuthor(comments.users.find(user => user.id === comment.author_id)));
-				return ticket.ticket;
+				const ticket = {
+					subject: ticketResponse.ticket.subject,
+					submitter_id: ticketResponse.ticket.submitter_id
+				};
+
+				ticket.comments = comments.comments.map(comment => ({
+					author: formatAuthor(comments.users.find(user => user.id === comment.author_id)),
+					author_id: comment.author_id,
+					created_at: comment.created_at,
+					html_body: comment.html_body,
+					id: comment.id,
+				}));
+				return ticket;
 			})
 		);
 	},

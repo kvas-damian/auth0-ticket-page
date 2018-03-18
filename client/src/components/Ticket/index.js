@@ -18,7 +18,7 @@ function Ticket(props) {
 				</div>
 				<div className="col-md-11">
 					<h4>{firstComment.author.name} <TimeAgo date={firstComment.created_at} /></h4>
-					{firstComment.body}
+					<div dangerouslySetInnerHTML={{__html: firstComment.html_body}} />
 				</div>
 			</div>
 			{props.ticket.comments.length > 1 &&
