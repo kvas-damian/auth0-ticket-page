@@ -60,7 +60,7 @@ class App extends Component {
 									</Button>
 								)
 							}
-							<Route exact path="/" component={Home}/>
+							<Route exact path="/" render={() => <Home auth={this.auth}/>} />
 							<Route path="/tickets/:id" render={(params) => <TicketPage auth={this.auth} id={params.match.params.id}/> } />
 							<Route path="/callback" render={(props) => {
 								handleAuthentication(props);

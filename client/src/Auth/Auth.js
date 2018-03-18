@@ -8,7 +8,6 @@ export default class Auth {
 		redirectUri: AUTH_REDIRECT_URL,
 		audience: `https://${AUTH0_DOMAIN}/api/v2/`,
 		responseType: 'token id_token',
-		scope: 'openid'
 	});
 
 	constructor() {
@@ -25,8 +24,14 @@ export default class Auth {
 	handleAuthentication() {
 		this.auth0.parseHash((err, authResult) => {
 			if (authResult && authResult.accessToken && authResult.idToken) {
-				this.setSession(authResult);
-				window.location = '/';
+				this.auth0.client.userInfo(authResult.accessToken, (err, user) => {
+					if (user.email_verified) {
+						this.setSession(authResult);
+					} else {
+						// TODO
+						alert('Verify your email before logging in!');
+					}
+				});
 			} else if (err) {
 				window.location = '/';
 				console.log(err);

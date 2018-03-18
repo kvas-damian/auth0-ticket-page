@@ -14,11 +14,12 @@ function makeRequest(path, method='GET', body) {
 		method,
 		body: JSON.stringify(body)
 	}).then(res => {
-		if (res.status === 200) {
+		if (res.status === 200 || res.status === 201) {
 			return res.json();
 		} else if (res.status === 404) {
 			return null;
 		} else {
+			console.log(res);
 			const error = new Error(res.status);
 			error.response = res.statusText;
 			return Promise.reject(error);
@@ -37,7 +38,6 @@ function formatAuthor(author) {
 }
 
 module.exports = {
-	// TODO add authorization
 	getTicket(ticketId) {
 		const ticketPath = `tickets/${ticketId}.json`;
 		const commentsPath = `tickets/${ticketId}/comments.json?include=users`;
@@ -47,7 +47,7 @@ module.exports = {
 				return makeRequest(commentsPath).then(comments => {
 					const ticket = {
 						subject: ticketResponse.ticket.subject,
-						submitter_id: ticketResponse.ticket.submitter_id
+						submitter_id: ticketResponse.ticket.submitter_id,
 					};
 
 					ticket.comments = comments.comments.map(comment => ({
@@ -65,6 +65,17 @@ module.exports = {
 		});
 	},
 
+	getRequestedTickets(userId) {
+		const path = `users/${userId}/tickets/requested.json`;
+
+		return makeRequest(path).then(res => {
+			return res.tickets.map(ticket => ({
+				id: ticket.id,
+				subject: ticket.subject
+			}))
+		});
+	},
+
 	addComment(ticketId, authorId, body) {
 		const ticketPath = `tickets/${ticketId}.json?include=users`;
 
@@ -78,13 +89,36 @@ module.exports = {
 		}).then(res => {
 			const comment = res.audit.events[0];
 
-			return {
-				author: formatAuthor(res.users.find(user => user.id === comment.author_id)),
+			return this.getUser(authorId).then(user => ({
+				author: formatAuthor(user),
 				author_id: comment.author_id,
 				html_body: comment.html_body,
 				created_at: res.audit.created_at,
 				id: comment.id
-			};
+			}));
 		});
+	},
+
+	getUser(userId) {
+		const path = `users/${userId}.json`;
+
+		return makeRequest(path).then(res => res.user);
+	},
+
+	findUser(email) {
+		const path = `search.json?query=type:user email:"${email}"`;
+
+		return makeRequest(path).then(res => {
+			return res.results && res.results[0];
+		});
+	},
+
+	createUser(email, name) {
+		return makeRequest('users.json', 'POST', {
+			user: {
+				email,
+				name
+			}
+		}).then(res => res.user);
 	}
 };

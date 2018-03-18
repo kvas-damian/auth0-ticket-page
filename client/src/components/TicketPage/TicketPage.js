@@ -75,13 +75,13 @@ class TicketPage extends Component {
 					{(() => {
 						switch(this.state.state) {
 							case this.STATE_DONE:
-								return(
+								return (
 									<Ticket ticket={this.state.ticket} onCommentFormSubmit={this.onCommentFormSubmit}/>
 								);
 							case this.STATE_NOT_FOUND:
-								return 'Ticket not found';
+								return (<div className="loading-screen">Ticket not found</div>);
 							case this.STATE_ERROR:
-								return 'The website encountered an unexpected error. Please try again later';
+								return (<div className="loading-screen">'The website encountered an unexpected error. Please try again later'</div>);
 						}
 					})()}
 					</div>
