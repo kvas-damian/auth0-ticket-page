@@ -87,7 +87,7 @@ class TicketPage extends Component {
 					</div>
 				}
 				</div> :
-				<div>You need to log in</div>
+				<div className="loading-screen">You need to log in</div>
 			}
 			</div>
 		);

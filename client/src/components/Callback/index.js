@@ -4,7 +4,9 @@ import Spinner from '../Spinner';
 class Callback extends Component {
 	render() {
 		return (
-			<Spinner/>
+			<div className="loading-screen">
+				<Spinner/>
+			</div>
 		);
 	}
 }
