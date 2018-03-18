@@ -23,7 +23,6 @@ function Ticket(props) {
 				</div>
 				{props.ticket.collaborators && props.ticket.collaborators.length > 0 &&
 					<div className="col-md-4">
-						<h3>Collaborators</h3>
 						<CollaboratorsList collaborators={props.ticket.collaborators}/>
 					</div>
 				}

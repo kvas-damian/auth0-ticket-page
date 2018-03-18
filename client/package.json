@@ -16,7 +16,16 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "postinstall": "mkdir styleguide; cd styleguide; git init; git remote add -f origin https://github.com/kvas-damian/styleguide.git; git config core.sparseCheckout true; echo \"packages/react-components\" >> .git/info/sparse-checkout; git pull --depth=1 origin update-to-react16; npm install; cd ..; npm i ./styleguide/packages/react-components/"
+    "postinstall": "mkdir styleguide; cd styleguide; git init; git remote add -f origin https://github.com/kvas-damian/styleguide.git; git config core.sparseCheckout true; echo \"packages/react-components\" >> .git/info/sparse-checkout; git pull --depth=1 origin update-to-react16; npm install; cd ..; npm i ./styleguide/packages/react-components/",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
-  "proxy": "http://localhost:7777"
+  "proxy": "http://localhost:7777",
+  "devDependencies": {
+    "@storybook/react": "^3.3.15",
+    "@storybook/addon-actions": "^3.3.15",
+    "@storybook/addon-links": "^3.3.15",
+    "@storybook/addons": "^3.3.15",
+    "babel-core": "^6.26.0"
+  }
 }
