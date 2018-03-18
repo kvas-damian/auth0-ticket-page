@@ -9,11 +9,14 @@
     "url": "git+https://github.com/kvas-damian/auth0-ticket-page.git"
   },
   "dependencies": {
+    "auth0-js": "^9.3.3",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "express-jwt": "^5.3.1",
     "jade": "~1.11.0",
+    "jwks-rsa": "^1.2.1",
     "morgan": "~1.9.0",
     "node-fetch": "^2.1.1",
     "nodemon": "^1.17.1",

@@ -15,14 +15,17 @@ class TicketPage extends Component {
 	state = {};
 
 	componentDidMount() {
-		fetch(`/api/tickets/${this.props.match.params.id}`)
-			.then(res => res.json())
-			.then(ticket => this.setState({ ticket }));
+		if (this.props.auth.isAuthenticated()) {
+			fetch(`/api/tickets/${this.props.id}`, { headers: { 'Authorization': `Bearer ${this.props.auth.getAccessToken()}`} } )
+				.then(res => res.json())
+				.then(ticket => this.setState({ ticket }));
+		}
 	}
 
 	onCommentFormSubmit(commentBody) {
-		return fetch(`/api/tickets/${this.props.match.params.id}`, {
+		return fetch(`/api/tickets/${this.id}`, {
 			headers: {
+				'Authorization': `Bearer ${this.props.auth.getAccessToken()}`,
 				'Content-Type': 'application/json'
 			},
 			method: 'PUT',
@@ -46,6 +49,8 @@ class TicketPage extends Component {
 
 		return (
 			<div className="container">
+			{ this.props.auth.isAuthenticated() ?
+				<div>
 				<Breadcrumb items={breadcrumbItems}/>
 				{!this.state.ticket ?
 					<div className="loading-screen">
@@ -57,6 +62,9 @@ class TicketPage extends Component {
 						<Ticket ticket={this.state.ticket} onCommentFormSubmit={this.onCommentFormSubmit}/>
 					</div>
 				}
+				</div> :
+				<div>You need to log in</div>
+			}
 			</div>
 		);
 	}

@@ -3,11 +3,29 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const jwt = require('express-jwt');
+const jwksRsa = require('jwks-rsa');
 
-const index = require('./routes/index');
 const api = require('./routes/api');
+const config = require('./config');
 
 const app = express();
+
+
+const checkJwt = jwt({
+	// Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint.
+	secret: jwksRsa.expressJwtSecret({
+		cache: true,
+		rateLimit: true,
+		jwksRequestsPerMinute: 5,
+		jwksUri: `https://${config.AUTH0_DOMAIN}/.well-known/jwks.json`
+	}),
+
+	// Validate the audience and the issuer.
+	audience: `https://${config.AUTH0_DOMAIN}/api/v2/`,
+	issuer: `https://${config.AUTH0_DOMAIN}/`,
+	algorithms: ['RS256']
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 
-app.use('/api', api);
+app.use('/api', checkJwt, api);
 
 app.get('/*', function (req, res) {
 	res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));

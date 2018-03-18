@@ -6,7 +6,9 @@ function Home(props) {
 	const auth = new Auth();
 
 	return (
-		auth.login()
+		<div>
+			<a href="/tickets/2"> Ticket 2</a>
+		</div>
 	);
 }
 
