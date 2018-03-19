@@ -38,6 +38,12 @@ class Home extends Component {
 						<Spinner/>
 					</div>
 				}
+
+				{ this.props.auth.isAuthenticated() && this.state.state !== this.STATE_LOADING && this.state.tickets.length === 0 &&
+					<div className="loading-screen">
+						<p>You don't have any tickets yet, but you can take a look on a <a href="/tickets/4"> Demo ticket</a>.</p>
+					</div>
+				}
 				<ul>
 				{ this.state.tickets.map(ticket => <li><a href={`/tickets/${ticket.id}`}>{ticket.subject}</a></li>) }
 				</ul>
