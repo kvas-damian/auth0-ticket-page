@@ -1,12 +1,12 @@
 import auth0 from 'auth0-js';
-import {AUTH_REDIRECT_URL, AUTH0_DOMAIN, AUTH0_CLIENT_ID} from '../config';
+import {AUTH_REDIRECT_URL, AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_AUDIENCE} from '../config';
 
 export default class Auth {
 	auth0 = new auth0.WebAuth({
 		domain: AUTH0_DOMAIN,
 		clientID: AUTH0_CLIENT_ID,
 		redirectUri: AUTH_REDIRECT_URL,
-		audience: `https://${AUTH0_DOMAIN}/api/v2/`,
+		audience: AUTH0_AUDIENCE,
 		responseType: 'token id_token',
 	});
 
